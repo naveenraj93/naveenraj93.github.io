@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>To Do List</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        background: #8e2de2;
+        /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, #4a00e0, #8e2de2);
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, #4a00e0, #8e2de2);
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        color: white;
+      }
+
+      #header {
+        animation: header_border;
+        border-width: 0px;
+        animation-duration: 1s;
+        animation-delay: 0s;
+        animation-timing-function: linear;
+        font-family: serif;
+      }
+
+      @keyframes header_border {
+        0% {
+          border-width: 0px;
+          transform: scale(0.8);
+        }
+        50% {
+          border-width: 50px;
+        }
+        100% {
+          border-width: 1px;
+          transform: scale(1);
+        }
+      }
+
+      #task_to_add {
+        box-shadow: 6px 6px 1px rgb(163, 177, 198, 1),
+          12px 12px 3px rgb(163, 177, 198, 0.5);
+      }
+
+      #add_task_button {
+        box-shadow: 9px 9px 5px rgb(163, 177, 198, 0.5);
+        font-family: serif;
+        font-weight: bolder;
+      }
+
+      li {
+        color: black;
+        overflow: auto;
+      }
+
+      button[class="btn"]:hover {
+        color: red;
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        /* background-color: red; */
+        color: white;
+        text-align: center;
+        font-family: cursive;
+      }
+    </style>
+  </head>
+
+  <body>
+    <center>
+      <h1 class="display-4" id="header">
+        <span
+          id="headers"
+          class="border border-top-0 border-right-0 border-left-0"
+        >
+          To Do List
+        </span>
+      </h1>
+    </center>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group" style="margin-top: 50px;">
+            <input
+              type="input"
+              class="form-control"
+              id="task_to_add"
+              placeholder="Enter the task to do!!"
+              onkeyup="checkForEnter(event)"
+            />
+            <br />
+            <button
+              type="button"
+              class="btn btn-warning float-right"
+              id="add_task_button"
+              onclick="add_task()"
+            >
+              Add Task
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br /><br />
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" id="task_list">
+          <ul class="list-group"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fulid footer">
+      <div class="mx-auto">
+        By Naveenraj
+      </div>
+    </div>
+
+    <script>
+      // var task_list = ["first task", "2nd task"];
+      // console.log(task_list);
+      // console.log(JSON.stringify(task_list));
+      // console.log(JSON.parse(JSON.stringify(task_list)));
+      var task_list = JSON.parse(localStorage.getItem("TaskDetails"));
+
+      if (task_list == null) task_list = [];
+
+      function checkForEnter(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          document.getElementById("add_task_button").click();
+        }
+      }
+
+      function populate_taskList() {
+        var tlen = task_list.length;
+        var ul_element = document.getElementById("task_list");
+        var html_to_append = "";
+        for (var i = 0; i < tlen; i++) {
+          html_to_append +=
+            '<li class="list-group-item d-flex justify-content-between align-items-center">';
+          html_to_append += "<span> " + task_list[i] + "</span>";
+          html_to_append +=
+            '<button type="button" class="btn" onclick="deleteTask(' +
+            i +
+            ')"><i class="material-icons">delete_forever</i></i></button></li>';
+        }
+        ul_element.innerHTML = html_to_append;
+      }
+
+      function add_task() {
+        var new_task = document.getElementById("task_to_add");
+        if (new_task.value != "") {
+          task_list.push(new_task.value);
+          new_task.value = "";
+          localStorage.setItem("TaskDetails", JSON.stringify(task_list));
+          populate_taskList();
+        }
+      }
+
+      function deleteTask(index) {
+        task_list.splice(index, 1);
+        localStorage.setItem("TaskDetails", JSON.stringify(task_list));
+        populate_taskList();
+      }
+      populate_taskList();
+    </script>
+  </body>
+</html>
