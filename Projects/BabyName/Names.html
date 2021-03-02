@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Name</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Baby Name</h2>
+        <label for="fname" class="mr-sm-2">First name:</label>
+        <input type="text" id="fname" name="fname" class="form-control mb-2 mr-sm-2" placeholder="Enter Name" onkeyup="checkForEnter(event)">
+        <button onclick="calc()" class="btn btn-primary mr-2">Calculate</button>
+        <button onclick="saveName()" class="btn btn-secondary">Save</button>
+        <div class="mt-5">
+            <h4>Result </h4>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Without Inital</th>
+                        <th>With Inital 'N'</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span id="nameSplit"></span><br>
+                            <span id="nameNumber"></span>
+                        </td>
+                        <td id="totalNumber"></td>
+                        <td id="totalNumberN"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container">
+        <h4>Stored Names </h4>
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Without Inital</th>
+                    <th>With Inital 'N'</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="storedNamesTbody">
+                <tr>
+                    <td>
+                        <span>name</span><br>
+                        <span>numbers</span>
+                    </td>
+                    <td>sum</td>
+                    <td>sum</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var chars = {
+            A: 1,
+            B: 2,
+            C: 3,
+            D: 4,
+            E: 5,
+            F: 8,
+            G: 3,
+            H: 5,
+            I: 1,
+            J: 1,
+            K: 2,
+            L: 3,
+            M: 4,
+            N: 5,
+            O: 7,
+            P: 8,
+            Q: 1,
+            R: 2,
+            S: 3,
+            T: 4,
+            U: 6,
+            V: 6,
+            W: 6,
+            X: 5,
+            Y: 1,
+            Z: 7
+        };
+        var storedNames = JSON.parse(localStorage.getItem("babyNames"));
+        var tmpName = "";
+
+        if (!storedNames) {
+            storedNames = [];
+        }
+
+        function calc() {
+            var data = document.getElementById('fname').value.toUpperCase();
+            var dataArr = data.split("");
+            var nameSplit = "";
+            var nameNumber = "";
+            var totalNumber = 0;
+
+            dataArr.forEach(element => {
+                if (chars[element]) {
+                    nameSplit = nameSplit + " " + element;
+                    nameNumber = nameNumber + " " + chars[element];
+                    totalNumber = totalNumber + chars[element];
+                }
+            });
+
+            tmpName = {
+                nameSplit: nameSplit.toLowerCase(),
+                nameNumber: nameNumber,
+                totalNumber: totalNumber + " -> " + reduceNumber(totalNumber),
+                totalNumberN: (totalNumber + 5) + " -> " + reduceNumber(totalNumber + 5)
+            }
+            document.getElementById('nameSplit').innerHTML = tmpName.nameSplit;
+            document.getElementById('nameNumber').innerHTML = tmpName.nameNumber;
+            document.getElementById('totalNumber').innerHTML = tmpName.totalNumber;
+            document.getElementById('totalNumberN').innerHTML = tmpName.totalNumberN;
+
+        }
+
+        function reduceNumber(num) {
+
+            var numStr = "" + num;
+            var result = numStr.split("")
+                .map(e => parseInt(e))
+                .reduce((total, value) => {
+                    return total + value
+                });
+            if (result < 10) {
+                return result;
+            } else {
+                return reduceNumber(result);
+            }
+        }
+
+
+        function checkForEnter(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                calc();
+            }
+        }
+
+        function saveName() {
+            if (storedNames.some(d => d.nameSplit === tmpName.nameSplit)) {
+                return;
+            }
+            storedNames.push(tmpName);
+            localStorage.setItem("babyNames", JSON.stringify(storedNames));
+            populateTable();
+        }
+
+        function populateTable() {
+            var numOfNames = storedNames.length;
+            var htmlToAppend = "";
+            var storedNamesTbodyUI = document.getElementById("storedNamesTbody");
+            for (var i = 0; i < numOfNames; ++i) {
+                var tmp = storedNames[i];
+                htmlToAppend += "<tr> <td> <span>" + tmp.nameSplit + "</span><br> <span>" + tmp.nameNumber + "</span> </td> " +
+                    "<td>" + tmp.totalNumber + "</td><td>" + tmp.totalNumberN + "</td>" +
+                    "<td><button type='button' class='btn' onclick='deleteName(" + i + ")'><i class='material-icons'>delete_forever</i></button></td></tr>";
+            };
+            storedNamesTbodyUI.innerHTML = htmlToAppend;
+        }
+
+        function deleteName(index) {
+            storedNames.splice(index, 1);
+            localStorage.setItem("babyNames", JSON.stringify(storedNames));
+            populateTable();
+        }
+
+        populateTable();
+    </script>
+</body>
+
+</html>
