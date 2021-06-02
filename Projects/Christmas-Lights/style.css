@@ -1,0 +1,168 @@
+:root {
+  --red: #c0392b;
+  --yellow: #f1c40f;
+  --lightblue: #64fcfe;
+  --green: #2ecc71;
+  --pink: #ff00ff;
+  --lightgreen: #7cfc00;
+  --blue: #0000ff;
+}
+body {
+  background-color: #000000;
+  color: white;
+}
+
+.title,
+.lights {
+  text-align: center;
+}
+
+.lights span {
+  margin: 0 1rem;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  background: #ffffff;
+  display: inline-block;
+}
+
+.lights span::before {
+  position: relative;
+  content: "";
+  height: 15px;
+  width: 15px;
+  display: block;
+  top: -14px;
+  left: 7px;
+  background: #949494;
+  margin: 0;
+  padding: 0;
+  border-radius: 5px;
+  border-bottom: 2px solid rgb(97, 81, 107);
+}
+
+.lights span::after {
+  position: relative;
+  content: "";
+  width: 60px;
+  height: 18.6666666667px;
+  display: block;
+  top: -42px;
+  left: 16px;
+  background: #949494;
+  border-radius: 50%;
+  border-bottom: 2px solid rgb(97, 81, 107);
+}
+
+.lights span:last-child::after {
+  position: relative;
+  content: "";
+  border: none;
+  width: 0px;
+  height: 0px;
+}
+
+.lights span:nth-child(1) {
+  background: var(--red);
+  animation: glow-red 1s infinite;
+}
+
+.lights span:nth-child(2) {
+  background: var(--yellow);
+  animation: glow-yellow 1s infinite 0.1s;
+}
+
+.lights span:nth-child(3) {
+  background: var(--lightblue);
+  animation: glow-lightblue 1s infinite 0.2s;
+}
+
+.lights span:nth-child(4) {
+  background: var(--green);
+  animation: glow-green 1s infinite 0.3s;
+}
+
+.lights span:nth-child(5) {
+  background: var(--pink);
+  animation: glow-pink 1s infinite 0.2s;
+}
+
+.lights span:nth-child(6) {
+  background: var(--lightgreen);
+  animation: glow-lightgreen 1s infinite 0.1s;
+}
+
+.lights span:nth-child(7) {
+  background: var(--blue);
+  animation: glow-blue 1s infinite 0s;
+}
+
+@keyframes glow-red {
+  0%,
+  100% {
+    box-shadow: 0 0 20px 10px var(--red);
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+@keyframes glow-yellow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px 10px var(--yellow);
+  }
+  50% {
+    box-shadow: none;
+  }
+}
+
+@keyframes glow-lightblue {
+    0%,
+    100% {
+      box-shadow: 0 0 20px 10px var(--lightblue);
+    }
+    50% {
+      box-shadow: none;
+    }
+  }
+
+  @keyframes glow-green {
+    0%,
+    100% {
+      box-shadow: 0 0 20px 10px var(--green);
+    }
+    50% {
+      box-shadow: none;
+    }
+  }
+
+  @keyframes glow-pink {
+    0%,
+    100% {
+      box-shadow: 0 0 20px 10px var(--pink);
+    }
+    50% {
+      box-shadow: none;
+    }
+  }
+
+  @keyframes glow-lightgreen {
+    0%,
+    100% {
+      box-shadow: 0 0 20px 10px var(--lightgreen);
+    }
+    50% {
+      box-shadow: none;
+    }
+  }
+
+  @keyframes glow-blue {
+    0%,
+    100% {
+      box-shadow: 0 0 20px 10px var(--blue);
+    }
+    50% {
+      box-shadow: none;
+    }
+  }
