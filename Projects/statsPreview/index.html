@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- displays site properly based on user's device -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Lexend+Deca&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Frontend Mentor | Stats preview card component</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 order-last order-lg-first cardData"> 
+        <!--  -->
+        <h1>Get <span>insights</span> that help your business grow.</h1>
+        <p>
+          Discover the benefits of data analytics and make better decisions
+          regarding revenue, customer experience, and overall efficiency.
+        </p>
+        <div class="stats">
+          <ul>10k+ <br/><span>COMPANIES</span></ul>
+          <ul>314 <br/><span>TEMPLATES</span> </ul>
+          <ul>12M+ <br/><span>QUERIES</span></ul>
+        </div>
+      </div>
+      <div class="col-lg-6 order-first order-lg-last cardImage">
+        <!-- Hello -->
+        <!--   -->
+        <picture>
+          <source media="(max-width:375px)" srcset="images\image-header-mobile.jpg">
+          <img src="images\image-header-desktop.jpg" alt="Flowers">
+        </picture>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
