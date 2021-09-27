@@ -1,0 +1,238 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    scroll-behavior: smooth;
+}
+
+main {
+    position: relative;
+    margin: 0 10px;
+    height: 100%;
+}
+
+.editorSection {
+    width: 50%;
+    height: 95%;
+    padding-top: 10px;
+}
+
+.resultSection {
+    z-index: 5;
+    position: absolute;
+    left: 50%;
+    top: 0%;
+    margin: 5px 10px 0px 10px;
+    width: 47%;
+    /* height: 95%; */
+}
+
+.buttonsSection {
+    margin: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.buttonsSection button:nth-child(1) {
+    margin-right: 10px;
+    margin-bottom: initial;
+}
+
+.consoleSection {
+    position: relative;
+    margin-top: 10px;
+    min-width: 100%;
+}
+
+.console {
+    padding: 2rem;
+    color: #ffffff;
+    background-color: #000000;
+    max-height: 50vh;
+    overflow: auto;
+}
+
+.iconSvg {
+    vertical-align: sub;
+    font-size: 2.5rem;
+}
+
+.consoleHeader {
+    font-size: 1rem;
+}
+
+.clearLogBtn {
+    font-size: 0.75rem;
+    position: sticky;
+    bottom: 0%;
+    left: 100%;
+    border-radius: 20px;
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.codeNameInputError {
+    border: 3px solid #ff22009f;
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(4px);
+    }
+    70% {
+        transform: translateX(-4px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.shakeClass {
+    animation: shake 0.2s 0s 2;
+}
+
+@media only screen and (max-width: 768px) {
+    main {
+        margin: 10px;
+    }
+    .editorSection {
+        width: 100%;
+        height: 50%;
+    }
+    .resultSection {
+        position: initial;
+        width: 100%;
+        margin: 0px;
+        margin-top: 10px;
+    }
+    .buttonsSection {
+        position: relative;
+        width: 100%;
+        margin: 0px;
+    }
+    .buttonsSection button:nth-child(1) {
+        margin-right: 10px;
+        margin-bottom: initial;
+    }
+    .iconSvg {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+
+#snackbar {
+    visibility: hidden;
+    /* Hidden by default. Visible on click */
+    min-width: 250px;
+    /* Set a default minimum width */
+    margin-left: -125px;
+    /* Divide value of min-width by 2 */
+    background-color: rgb(145, 6, 238);
+    /* Black background color */
+    color: #fff;
+    /* White text color */
+    text-align: center;
+    /* Centered text */
+    border-radius: 2px;
+    /* Rounded borders */
+    padding: 16px;
+    /* Padding */
+    position: fixed;
+    /* Sit on top of the screen */
+    z-index: 1;
+    /* Add a z-index if needed */
+    left: 50%;
+    /* Center the snackbar */
+    bottom: 30px;
+    /* 30px from the bottom */
+    border-radius: 20px;
+}
+
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+
+#snackbar.show {
+    visibility: visible;
+    /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+    However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+
+/* Animations to fade the snackbar in and out */
+
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+.card {
+    /* box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px; */
+    /* box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px; */
+    box-shadow: rgba(0, 0, 0, 0.06) 0px 2px 4px 0px inset;
+    border: none;
+}
+
+.card:hover {
+    /* box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px; */
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.card:hover .editSvg {
+    color: #08f013;
+}
+
+.card:hover .deleteSvg {
+    color: #ff0909;
+}

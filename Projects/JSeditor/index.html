@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>JS Editor by Naveenraj</title>
+    <base href="/Projects/JSeditor/">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/editor/editor.main.min.css" integrity="sha512-896EGrrwYjjw7rSmY1wybIey2vw8chm+mLcJx5xOssMFegAhWBwenZVOyLmZ6/C/ssxoAp1E6Hw/GvioJKsUow=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+    <script>
+        var require = {
+            paths: {
+                'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs'
+            }
+        };
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/loader.min.js" integrity="sha512-SExj71Cw3B9C9EE8BC/ad3AKia5zQXDj/2SM4THgkeKh5GIFZhKM/R3uclUG8YZwJrjcVhydAlIHmfNvsBCKZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/editor/editor.main.nls.min.js" integrity="sha512-p3VXufoiHDjU6+e1xRj04anAtLN0ZuUTRMFwCmB2NTThSSsovw+PzqJ/immTaXx7WQFVpYEf8b/L/2409M/kSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.27.0/min/vs/editor/editor.main.min.js" integrity="sha512-9jM8njc2Rfatkgu3ZhuWcwZzl24/Kr19Vx2BQecWysWcoPtQdXA0Hx5jj7eF5VCaGzIDEztgjhLM3RpSdL5nnw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <main>
+        <div class="editorSection">
+            <div id="container"></div>
+        </div>
+
+        <div class="resultSection">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Save as :</span>
+                </div>
+                <input type="text" class="form-control" placeholder="Enter code name..." id="codeEditorName">
+
+            </div>
+            <div class="buttonsSection">
+                <button class="btn btn-success" onClick="run();this.blur();" type="button">
+                    <i class="material-icons iconSvg">play_circle_outline</i>
+                </button>
+                <button class="btn btn-info" onClick="saveCode();this.blur();" type="button">
+                    <i class="material-icons iconSvg">save</i>
+                </button>
+            </div>
+            <div class="consoleSection">
+                <div class="card bg-secondary text-white">
+                    <div class="card-body " id="target">Display return value from the code</div>
+                </div>
+            </div>
+            <div class="consoleSection jumbotron console">
+                <u class="consoleHeader">Console log:</u>
+                <div id="console"></div>
+                <button class="btn btn-light clearLogBtn" onClick="clearConsole();this.blur();" type="button">
+                    clear log
+                </button>
+            </div>
+        </div>
+        <div class="container-fluid mt-5 pb-5" id="savedCodes">
+            <h4 class="text-center">Saved Codes</h4>
+            <div class="row" id="savedCodeCards">
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- snackbar -->
+    <div id="snackbar">Code Saved</div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCardTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <button type="button" class="btn btn-warning btn-sm" onclick="deleteCode()">Delete</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="$('#myModal').modal('hide');">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="codes.js"></script>
+    <script src="main.js"></script>
+
+</body>
+
+</html>
