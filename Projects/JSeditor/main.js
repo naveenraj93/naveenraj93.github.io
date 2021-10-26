@@ -53,7 +53,7 @@ function run() {
         result = e;
     }
     target_pre.innerText = result;
-    consoleDom.innerText += '---' + new Date().toLocaleString() + '\n';
+    consoleDom.innerText += '---Logged on ' + new Date().toLocaleString() + '\n';
 }
 
 function newConsoleLog(arguments) {
@@ -148,3 +148,7 @@ function deleteCode() {
     $("#myModal").modal("hide");
     loadSavedCards();
 }
+
+$(document).ready(function() {
+    $('#runButton').tooltip({ title: "Ctrl + Enter", animation: true });
+});
