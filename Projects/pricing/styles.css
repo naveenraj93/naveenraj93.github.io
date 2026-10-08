@@ -1,0 +1,98 @@
+/* Custom styles for Garment Costing & Pricing App */
+
+/* Smooth custom range slider */
+input[type=range] {
+  -webkit-appearance: none;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  height: 8px;
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4f46e5;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: #4338ca;
+}
+
+/* Remove default number input spin buttons for a cleaner appearance */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Ensure all text and number inputs always have a white background */
+input[type="text"],
+input[type="number"] {
+  background-color: #ffffff !important;
+}
+
+
+/* Print optimizations */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide interactive range sliders in print */
+  input[type="range"] {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  .card-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #cbd5e1 !important;
+  }
+}
+
+/* Tooltip & badge transitions */
+.badge-transition {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Toast animation */
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.toast-enter {
+  animation: slideDown 0.25s ease-out forwards;
+}

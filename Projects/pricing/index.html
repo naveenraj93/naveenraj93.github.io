@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tirupur Garment Costing & Pricing Engine</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+            apparel: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4079590420598209"
+    crossorigin="anonymous"></script>
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L9JBZZ5RLQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-L9JBZZ5RLQ');
+  </script>
+</head>
+
+<body
+  class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Main Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Top Navigation / Header -->
+    <header class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 no-print">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span
+              class="inline-flex items-center justify-center p-2 bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-200">
+              <i data-lucide="scissors" class="w-5 h-5"></i>
+            </span>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+              Garment Costing & Pricing Engine
+            </h1>
+          </div>
+          <p class="text-sm text-slate-500 mt-1">
+            Real-time yarn, fabric consumption, CMT costing, and export quotations (INR, USD, EUR)
+          </p>
+        </div>
+
+        <!-- Presets and Global Actions -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span
+            class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1 hidden sm:inline">Presets:</span>
+          <!-- Dynamically populated from data.json -->
+          <div id="presetButtonsContainer" class="flex flex-wrap items-center gap-2"></div>
+          <button id="btnReset" title="Reset to Defaults"
+            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          </button>
+          <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+          <button id="btnCopyQuote"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+            <i data-lucide="copy" class="w-4 h-4"></i> Copy Quote
+          </button>
+          <button id="btnPrintQuote"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 shadow-sm transition">
+            <i data-lucide="printer" class="w-4 h-4"></i> Print
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- KPI Summary Quick Bar -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Piece Weight (PC WT)</p>
+          <p id="kpiPcWtKg" class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">0.1107 kg</p>
+          <p id="dispTotalGrams" class="text-xs text-slate-500 mt-0.5">110.7 g</p>
+        </div>
+        <div class="p-2.5 bg-sky-50 text-sky-600 rounded-xl">
+          <i data-lucide="scale" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Fabric Rate / kg</p>
+          <p id="kpiFabricRateKg" class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">₹379.00</p>
+          <p class="text-xs text-slate-500 mt-0.5">Yarn + Knit + Dye + Finish</p>
+        </div>
+        <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+          <i data-lucide="scroll" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Fabric Cost / pc</p>
+          <p id="kpiFabricCostPc" class="text-xl sm:text-2xl font-bold text-slate-900 mt-1">₹41.96</p>
+          <p class="text-xs text-slate-500 mt-0.5">PC WT × Rate/Kg</p>
+        </div>
+        <div class="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
+          <i data-lucide="coins" class="w-5 h-5"></i>
+        </div>
+      </div>
+
+      <div
+        class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-indigo-300 uppercase tracking-wider">Actual Garment Cost</p>
+          <p id="kpiActualPrice" class="text-xl sm:text-2xl font-bold text-white mt-1">₹43.21</p>
+          <p class="text-xs text-indigo-200 mt-0.5">Includes factory wastage</p>
+        </div>
+        <div class="p-2.5 bg-white/10 text-white rounded-xl">
+          <i data-lucide="tag" class="w-5 h-5"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Two-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: Dimensions, Specs & Fabric Rates (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Card: Style & Currency Info -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 card-container">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <i data-lucide="tag" class="w-4 h-4 text-indigo-600"></i> Style Details & Forex Rates
+            </h2>
+            <span class="text-xs text-slate-400">Order Header</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-medium text-slate-600 mb-1">Style Name / Code</label>
+              <input type="text" id="styleName"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-2xs"
+                placeholder="e.g. Round Neck T-Shirt">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Color / Fabric</label>
+              <input type="text" id="color"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition shadow-2xs"
+                placeholder="e.g. Single Jersey">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Fabric GSM</label>
+              <div class="relative">
+                <input type="number" id="gsm" step="1"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-semibold text-slate-800 transition shadow-2xs"
+                  placeholder="180">
+                <span class="absolute right-3 top-2.5 text-xs text-slate-400 pointer-events-none">g/m²</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-100">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">USD Forex Rate ($)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-xs text-slate-400 pointer-events-none">₹</span>
+                <input type="number" id="currencyUsd" step="0.5"
+                  class="w-full pl-7 pr-3 py-1.5 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-slate-800 transition shadow-2xs">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">EUR Forex Rate (€)</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-xs text-slate-400 pointer-events-none">₹</span>
+                <input type="number" id="currencyEur" step="0.5"
+                  class="w-full pl-7 pr-3 py-1.5 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium text-slate-800 transition shadow-2xs">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Garment Measurements & Fabric Consumption -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 card-container">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <i data-lucide="ruler" class="w-4 h-4 text-indigo-600"></i> Garment Measurements & Consumption
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Tirupur Standard Formula: ((Chest×Len + Sleeve×Len) × GSM) / 5000
+              </p>
+            </div>
+            <span class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700">
+              <span id="badgePcWt">0.1107 kg</span>
+            </span>
+          </div>
+
+          <!-- Body & Sleeve Dimensions -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Chest (Width)</label>
+              <input type="number" id="chest" step="0.5"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                placeholder="25">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Body Length</label>
+              <input type="number" id="length" step="0.5"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                placeholder="78">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Sleeve Width</label>
+              <input type="number" id="sleeveChest" step="0.5"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                placeholder="25">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Sleeve Length</label>
+              <input type="number" id="sleeveLength" step="0.5"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                placeholder="27">
+            </div>
+          </div>
+
+          <!-- Optional Bottom Wear Dimensions -->
+          <div class="mt-3 pt-3 border-t border-slate-100">
+            <span class="text-xs font-medium text-slate-400 block mb-2">Bottom Wear (Optional - for shorts / trousers /
+              boxers):</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Thigh × 2</label>
+                <input type="number" id="thighX2" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Bottom Length</label>
+                <input type="number" id="bottomLength" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Rib Allowance (g)</label>
+                <input type="number" id="rib" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                  placeholder="8">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Fabric Wastage %</label>
+                <div class="relative">
+                  <input type="number" id="fabricWastage" step="0.5"
+                    class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-medium transition shadow-2xs"
+                    placeholder="8">
+                  <span class="absolute right-3 top-2 text-xs text-slate-400 pointer-events-none">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed Weight Calculation Summary Box -->
+          <div
+            class="mt-4 p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            <div class="p-1">
+              <span class="text-xs text-slate-400 block">Main Fabric</span>
+              <span id="dispMainFab" class="text-sm font-semibold text-slate-800">94.5 g</span>
+            </div>
+            <div class="p-1">
+              <span class="text-xs text-slate-400 block">Rib Fabric</span>
+              <span id="dispRib" class="text-sm font-semibold text-slate-800">8.0 g</span>
+            </div>
+            <div class="p-1">
+              <span class="text-xs text-slate-400 block">Wastage (g)</span>
+              <span id="dispFabWastage" class="text-sm font-semibold text-slate-800">8.2 g (8%)</span>
+            </div>
+            <div class="p-1 bg-white rounded-lg shadow-2xs border border-indigo-100">
+              <span class="text-xs font-semibold text-indigo-600 block">Total Piece Wt</span>
+              <span id="cardPcWtKg" class="text-sm font-bold text-indigo-900">0.1107 kg</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Fabric Processing Rate per Kg -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 card-container">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <i data-lucide="layers" class="w-4 h-4 text-emerald-600"></i> Fabric Processing Cost per Kg
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Sum of raw yarn, knitting, dyeing & finishing operations</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block">Rate / kg</span>
+              <span id="cardFabricRateKg" class="text-base font-bold text-emerald-700">₹379.00</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Yarn (₹)</label>
+              <input type="number" id="yarn" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="256">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Knitting (₹)</label>
+              <input type="number" id="knitting" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="12">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Dyeing (₹)</label>
+              <input type="number" id="dyeing" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="100">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Compacting (₹)</label>
+              <input type="number" id="compacting" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="11">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Raising (₹)</label>
+              <input type="number" id="raising" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="0">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Stentering (₹)</label>
+              <input type="number" id="sentering" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="0">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">AOP Print (₹)</label>
+              <input type="number" id="aop" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="0">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">2nd Compacting (₹)</label>
+              <input type="number" id="compacting2" step="1"
+                class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium transition shadow-2xs"
+                placeholder="0">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: CMT, Manufacturing & Final Quotation Matrix (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- Card: Manufacturing Expenses (CMT, Trims & Wastage) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 card-container">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i> Garment Manufacturing Costs
+            </h2>
+            <span class="text-xs text-slate-400">Direct Costs / pc</span>
+          </div>
+
+          <div class="space-y-3">
+            <!-- Fabric Cost Auto-Calculated Row -->
+            <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200/60">
+              <div>
+                <span class="text-xs font-semibold text-slate-700 block">Fabric Cost per Piece</span>
+                <span class="text-2xs text-slate-400">PC WT × Fabric Rate/kg</span>
+              </div>
+              <span id="cardFabricCostPc" class="text-sm font-bold text-slate-900">₹41.96</span>
+            </div>
+
+            <!-- CMT & Embellishment Inputs -->
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Printing (₹)</label>
+                <input type="number" id="printing" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Embroidery (₹)</label>
+                <input type="number" id="embroidery" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">CMT (Sewing) (₹)</label>
+                <input type="number" id="cmt" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Trims & Acc (₹)</label>
+                <input type="number" id="accessories" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Overhead (₹)</label>
+                <input type="number" id="overhead" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-600 mb-1">Others (₹)</label>
+                <input type="number" id="others" step="0.5"
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition shadow-2xs"
+                  placeholder="0">
+              </div>
+            </div>
+
+            <!-- Wastage & Subtotal Calculation -->
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-600">
+                <span title="Total of Printing, Embroidery, CMT, Trims, Overheads & Others">CMT, Trims &
+                  Value-Add:</span>
+                <span id="dispOtherDirectCosts" class="font-semibold text-slate-800">₹0.00</span>
+              </div>
+
+              <div class="flex items-center justify-between text-xs text-slate-600">
+                <span>Direct Expenses Subtotal:</span>
+                <span id="dispDirectSubtotal" class="font-semibold text-slate-800">₹41.96</span>
+              </div>
+
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                  <span>Factory Wastage:</span>
+                  <input type="number" id="garmentWastage" step="0.5"
+                    class="w-14 px-2 py-1 text-xs text-center bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none font-semibold shadow-2xs"
+                    placeholder="3">
+                  <span class="text-slate-400">%</span>
+                </div>
+                <span id="dispGarmentWastage" class="text-xs font-semibold text-amber-700">₹1.26</span>
+              </div>
+
+              <div class="flex items-center justify-between pt-2 border-t border-slate-200 font-bold text-slate-900">
+                <span class="text-sm">Actual Garment Cost (Net):</span>
+                <span id="cardActualPrice" class="text-base text-indigo-700">₹43.21</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Quotations, Margins & Forex -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 card-container">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-4 h-4 text-indigo-600"></i> Profit & Export Quotations
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Commercial quotation with profit margins</p>
+            </div>
+            <span class="text-xs font-semibold text-slate-500">Forex Ready</span>
+          </div>
+
+          <!-- Dynamic Profit Margin Slider -->
+          <div
+            class="p-4 bg-indigo-50/60 rounded-xl border border-indigo-100 space-y-3 print:p-0 print:bg-transparent print:border-none print:space-y-0">
+            <div class="no-print space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-indigo-900">Interactive Profit Margin:</label>
+                <span id="customMarginLabel"
+                  class="text-sm font-bold text-indigo-700 px-2 py-0.5 bg-white rounded-lg border border-indigo-200 shadow-2xs">22%</span>
+              </div>
+              <input type="range" id="customMargin" min="0" max="50" step="1" value="22" class="w-full cursor-pointer">
+            </div>
+
+            <!-- Hero Price Output for Selected Margin -->
+            <div class="bg-white p-4 rounded-xl border border-indigo-200/80 shadow-sm mt-3 print:mt-0">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                <!-- LEFT: Profit Details -->
+                <div class="border-b sm:border-b-0 sm:border-r border-slate-100 pb-3 sm:pb-0 sm:pr-4">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span id="custom_margin_title"
+                      class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-md uppercase tracking-wider">22%
+                      Margin Quote</span>
+                  </div>
+                  <div class="flex items-baseline gap-1.5 mt-1">
+                    <span class="text-xs text-slate-400 font-medium">Profit:</span>
+                    <p id="custom_profit_amount" class="text-2xl font-black text-indigo-600 tracking-tight">+₹9.51</p>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-1">Base Cost: <span id="custom_base_cost"
+                      class="font-semibold text-slate-700">₹43.21</span></p>
+                </div>
+
+                <!-- RIGHT: Cost / Final Quote in INR / USD / EUR -->
+                <div class="sm:pl-1">
+                  <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block mb-1">Selling Price
+                    Quote</span>
+                  <div class="flex items-baseline gap-1.5">
+                    <p id="custom_inr" class="text-2xl font-black text-slate-900 tracking-tight">₹52.72</p>
+                    <span class="text-xs text-slate-400 font-semibold">INR</span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-2">
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold shadow-2xs">
+                      <span class="text-[10px] font-medium text-emerald-600">USD</span>
+                      <span id="custom_usd">$0.63</span>
+                    </span>
+                    <span
+                      class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold shadow-2xs">
+                      <span class="text-[10px] font-medium text-blue-600">EUR</span>
+                      <span id="custom_eur">€0.57</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fixed Margin Comparison Tiers (20%, 25%, 30%) -->
+          <div class="mt-4 space-y-2.5">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Standard Margin
+              Tiers:</span>
+
+            <!-- 20% Tier -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-indigo-300 transition bg-white gap-3 shadow-2xs">
+              <!-- LEFT: Profit -->
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center shrink-0">
+                  <span class="text-xs font-black text-indigo-700 leading-tight">20%</span>
+                  <span class="text-[9px] font-medium text-indigo-500 uppercase tracking-tighter">Margin</span>
+                </div>
+                <div>
+                  <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">Profit</span>
+                  <span id="tier20_profit" class="text-sm font-bold text-indigo-600">+₹8.64</span>
+                </div>
+              </div>
+
+              <!-- RIGHT: Total Quoted Cost in INR / Dollar / Euro -->
+              <div
+                class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block">INR</span>
+                  <span id="tier20_inr" class="text-base font-black text-slate-900">₹51.86</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">USD ($)</span>
+                  <span id="tier20_usd"
+                    class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">$0.62</span>
+                </div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-blue-600 uppercase block">EUR (€)</span>
+                  <span id="tier20_eur"
+                    class="text-sm font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">€0.56</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 25% Tier -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-indigo-300 transition bg-white gap-3 shadow-2xs">
+              <!-- LEFT: Profit -->
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center shrink-0">
+                  <span class="text-xs font-black text-indigo-700 leading-tight">25%</span>
+                  <span class="text-[9px] font-medium text-indigo-500 uppercase tracking-tighter">Margin</span>
+                </div>
+                <div>
+                  <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">Profit</span>
+                  <span id="tier25_profit" class="text-sm font-bold text-indigo-600">+₹10.80</span>
+                </div>
+              </div>
+
+              <!-- RIGHT: Total Quoted Cost in INR / Dollar / Euro -->
+              <div
+                class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block">INR</span>
+                  <span id="tier25_inr" class="text-base font-black text-slate-900">₹54.02</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">USD ($)</span>
+                  <span id="tier25_usd"
+                    class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">$0.64</span>
+                </div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-blue-600 uppercase block">EUR (€)</span>
+                  <span id="tier25_eur"
+                    class="text-sm font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">€0.59</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 30% Tier -->
+            <div
+              class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-indigo-300 transition bg-white gap-3 shadow-2xs">
+              <!-- LEFT: Profit -->
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center shrink-0">
+                  <span class="text-xs font-black text-indigo-700 leading-tight">30%</span>
+                  <span class="text-[9px] font-medium text-indigo-500 uppercase tracking-tighter">Margin</span>
+                </div>
+                <div>
+                  <span class="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">Profit</span>
+                  <span id="tier30_profit" class="text-sm font-bold text-indigo-600">+₹12.96</span>
+                </div>
+              </div>
+
+              <!-- RIGHT: Total Quoted Cost in INR / Dollar / Euro -->
+              <div
+                class="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100">
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-slate-400 uppercase block">INR</span>
+                  <span id="tier30_inr" class="text-base font-black text-slate-900">₹56.18</span>
+                </div>
+                <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-emerald-600 uppercase block">USD ($)</span>
+                  <span id="tier30_usd"
+                    class="text-sm font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">$0.67</span>
+                </div>
+                <div class="text-left sm:text-right">
+                  <span class="text-[10px] font-bold text-blue-600 uppercase block">EUR (€)</span>
+                  <span id="tier30_eur"
+                    class="text-sm font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">€0.61</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Cost Breakdown Bar -->
+          <div class="mt-4 pt-4 border-t border-slate-100">
+            <span class="text-xs font-medium text-slate-500 block mb-2">Cost Breakdown Composition:</span>
+            <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex shadow-inner">
+              <div id="barFabric" class="bg-indigo-600 transition-all duration-300" style="width: 79%;"></div>
+              <div id="barOther" class="bg-amber-500 transition-all duration-300" style="width: 0%;"></div>
+              <div id="barWastage" class="bg-rose-400 transition-all duration-300" style="width: 3%;"></div>
+              <div id="barProfit" class="bg-emerald-500 transition-all duration-300" style="width: 18%;"></div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between text-2xs text-slate-500 mt-2 gap-1">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-600"></span> <span
+                  id="legendFabric">Fabric: 79%</span></span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> <span
+                  id="legendOther">CMT: 0%</span></span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-400"></span> <span
+                  id="legendWastage">Wastage: 3%</span></span>
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span
+                  id="legendProfit">Profit: 18%</span></span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-400 py-4 no-print border-t border-slate-200">
+      Tirupur Garment Costing Engine
+    </footer>
+
+  </div>
+
+  <!-- Main Application Logic -->
+  <script src="app.js"></script>
+</body>
+
+</html>
